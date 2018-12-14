@@ -2295,6 +2295,89 @@
 
     var Field = jsGrid.Field;
 
+   function DecimalField(config) {
+      jsGrid.fields.number.call(this, config);
+    }
+
+    DecimalField.prototype = new jsGrid.fields.number({
+
+      filterValue: function () {
+        return this.filterControl.val()
+          ? parseFloat(this.filterControl.val() || 0, 10)
+          : undefined;
+      },
+
+      insertValue: function () {
+        return this.insertControl.val()
+          ? parseFloat(this.insertControl.val() || 0, 10)
+          : undefined;
+      },
+
+      editValue: function () {
+        return this.editControl.val()
+          ? parseFloat(this.editControl.val() || 0, 10)
+          : undefined;
+      }
+    });
+
+    jsGrid.fields.decimal = jsGrid.DecimalField = DecimalField; 
+
+   
+
+}(jsGrid, jQuery));
+
+(function(jsGrid, $, undefined) {
+
+    var Field = jsGrid.Field;
+
+    var MyDateField = function (config) {
+        jsGrid.Field.call(this, config);
+      };
+
+      MyDateField.prototype = new jsGrid.Field({
+
+        css: "date-field", // redefine general property 'css'
+        align: "center", // redefine general property 'align'
+
+
+        sorter: function (date1, date2) {
+          return new Date(date1) - new Date(date2);
+        },
+
+        itemTemplate: function (value) {
+          return new Date(value).toDateString();
+        },
+
+        insertTemplate: function (value) {
+          return this._insertPicker = $("<input>").datepicker({
+            defaultDate: new Date()
+          });
+        },
+
+        editTemplate: function (value) {
+          return this._editPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+        },
+
+        insertValue: function () {
+          return this._insertPicker.datepicker("getDate").toISOString();
+        },
+
+        editValue: function () {
+          return this._editPicker.datepicker("getDate").toISOString();
+        }
+      });
+    
+      jsGrid.fields.date = MyDateField;
+   
+
+}(jsGrid, jQuery));
+
+
+
+(function(jsGrid, $, undefined) {
+
+    var Field = jsGrid.Field;
+
     function ControlField(config) {
         Field.call(this, config);
         this._configInitialized = false;
